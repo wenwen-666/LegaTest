@@ -1,0 +1,55 @@
+common_rules:
+
+1. Basic Testing Requirements
+- Create JUnit 5 test class: {class_name}TestV{suite_index}Temp
+- Package name must match the tested class exactly
+- Test all public methods (at least one test per method)
+- NEVER DIRECTLY TEST PROTECTED OR PRIVATE METHODS - these should be tested indirectly through public methods
+- Follow AAA pattern: Arrange-Act-Assert
+- Method naming format: test<MethodName>_<Scenario>_<ExpectedResult>
+- Each test must include at least one meaningful assertion and compile without errors
+- Ensure all required imports (e.g., org.junit.jupiter.api.*) are included
+
+2. Coverage Strategy & Input Testing
+- Cover all major branches and paths: if/else, switch, ternary operators, loops, try/catch blocks, including both true and false conditions
+- Prioritize testing these scenarios: boundary conditions, guard clauses with early returns, and exception scenarios
+- Use diverse input values:
+  - Strings: null, empty, long strings, special characters
+  - Numbers: 0, negative, large, min/max values
+  - Collections: empty, single element, multiple elements
+  - Dates: current, past, future, boundary dates
+  - Objects: valid, invalid, edge states
+- Combine inputs to trigger complex paths (e.g., null with extreme values)
+
+3. Clarity & Readability
+- Each test method must include:
+  - @Test annotation
+  - @DisplayName("Verify [functionality] should [result] when [condition]")
+- Optional @Tag usage (feature, boundary, exception)
+- Add comments where logic is non-trivial and use helper methods for repeated setup or complex inputs
+
+4. Constraints & Visibility Rules
+- Never define multiple @Test or @DisplayName annotations on the same method
+- Never create duplicate test methods for the same scenario
+- Never create test methods without 'test' prefix
+- Never create empty tests or tests without assertions
+- Never call non-existent methods or undefined fields
+- Never include extra braces or misuse annotations
+- NEVER directly access private or protected members:
+  ❌ WRONG: myObject.privateField = value; OR value = myObject.privateField;
+  ❌ WRONG: myObject.privateMethod();
+  ❌ WRONG: Field field = MyClass.class.getDeclaredField("privateField"); field.setAccessible(true);
+  ✅ CORRECT: Use public getter/setter or other public methods to test behavior
+  ✅ CORRECT: myObject.getPrivateField(); OR myObject.setPrivateField(value);
+  ✅ CORRECT: myObject.publicMethodThatUsesPrivateMethod();
+- NEVER mock private methods or fields directly, only mock public interfaces
+
+5. Testing Private/Protected Members
+- If a class has private or protected members (fields or methods):
+  ✅ Test behavior through public methods that use those members
+  ✅ Create test scenarios that exercise the private/protected members indirectly 
+  ✅ Verify expected outcomes from public methods to confirm private members work correctly
+  ❌ Do not use reflection, special test runners, or other mechanisms to bypass access control
+- IMPORTANT: ONLY TEST PUBLIC METHODS DIRECTLY. NEVER ATTEMPT TO DIRECTLY TEST PRIVATE OR PROTECTED METHODS.
+
+Goal: Generate high-coverage, compilable, quality test suites with effective assertions, clear structure, and meaningful variations that strictly respect Java access modifiers 

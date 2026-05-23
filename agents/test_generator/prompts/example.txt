@@ -1,0 +1,54 @@
+package example.packagepath;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import java.util.*;
+import java.io.Serializable;
+
+
+public class ExampleClassTest {
+
+    private ExampleClass instance;
+
+    @BeforeEach
+    public void setUp() {
+        instance = new ExampleClass();
+    }
+
+@Test
+    @DisplayName("Verify someMethod returns expected value when called normally")
+    @Tag("functional")
+    public void testSomeMethod_NormalCall_ReturnsExpectedValue() {
+        
+        String result = instance.someMethod();
+        assertEquals("expected", result);
+    }
+
+@Test
+    @DisplayName("Verify someMethodThatThrows throws IllegalArgumentException when called with invalid state")
+    @Tag("exception")
+    public void testSomeMethodThatThrows_InvalidState_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            instance.someMethodThatThrows();
+        });
+}
+
+@Test
+    @DisplayName("Verify processNullable returns null when input is null")
+    @Tag("edge")
+    public void testProcessNullable_NullInput_ReturnsNull() {
+        Object result = instance.processNullable(null);
+        assertNull(result);
+}
+
+@Test
+    @DisplayName("Verify calculate returns correct sum when adding positive numbers")
+    @Tag("functional")
+    public void testCalculate_PositiveNumbers_ReturnsCorrectSum() {
+        int result = instance.calculate(10, 5);
+        assertEquals(15, result);
+}
+}

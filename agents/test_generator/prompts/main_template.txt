@@ -1,0 +1,64 @@
+# TEST GENERATION PROMPT
+
+## CLASS INFORMATION
+Class name: {class_name}
+Package: {package}
+Java version: {java_version}
+Imports: {imports}
+Class description:{class_description}
+
+## METHODS SECTION
+{methods_section}
+
+## METHOD CALL HIERARCHY
+The following shows the method call relationships, each line represents a call (format: "caller → method_name(parameters)"):
+{method_dependencies}
+
+## FIELD USAGE - IMPORTANT VISIBILITY GUIDELINES
+Below is information about fields in the class (format: access modifier field type field name):
+{fields_section}
+
+Note: Please test these fields according to Java access modifier rules:
+- public fields can be directly accessed for testing
+- private/protected fields should only be tested indirectly through public methods
+- Never attempt to directly access or modify non-public fields in tests
+
+## DEPENDENCIES
+Class dependencies:
+Extends: {extends_reference}
+Implements: {implements_reference}
+Instantiates: {instantiation_reference}
+Generic parameters: {generic_parameter}
+References: {class_reference}
+
+## VARIABLE INFORMATION
+Below are variables used in the class (format: variable name (type) [shows "This variable is modified" if write operations exist]):
+{variable_info}
+
+## CONSTRUCTOR DEPS & INIT USAGES
+Constructor information and initialized objects:
+Constructor signature: {constructor_signature}
+Initialized objects: {init_usages}
+
+## TESTING SCOPE - IMPORTANT
+Only test public APIs (public methods and fields).
+Private methods and fields should be tested indirectly through public methods.
+Do not use reflection or other mechanisms to access private members.
+
+## CRITICAL TESTING RULES
+- Only test public methods, this is the most important rule
+- Never directly test non-public (private/protected) methods
+- Non-public methods should only be tested indirectly through public methods
+- Do not use reflection or other means to access non-public members
+
+## Test focus
+{test focus}
+
+## Code
+{code}
+
+## TEST GUIDELINES
+{common_rules}
+
+## OUTPUT INSTRUCTIONS
+Generate a complete JUnit 5 test class that follows all guidelines above and only tests the public API of the class. Remember to never directly access private or protected fields/methods in your tests. 
