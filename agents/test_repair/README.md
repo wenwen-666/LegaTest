@@ -253,12 +253,12 @@ Function `classify_error()` in `classify_and_fix.py`:
 
 **Error**:
 ```
-[ERROR] cannot find symbol: class ZipFile
+[ERROR] cannot find symbol: class MissingDependency
 ```
 
 **Rule repair**:
 - Recognized as `IMPORT_ERRORS`
-- Add `import java.util.zip.ZipFile;`
+- Add the required import or dependency for the missing class
 - Maven validation succeeded ✅
 
 ### Example 2: Duplicate Modifier Error

@@ -1,4 +1,4 @@
-"""
+﻿"""
 测试执行模块
 负责运行Maven测试、生成JaCoCo和Surefire报告
 """
@@ -121,7 +121,7 @@ class TestExecutor:
     def filter_jacoco_report(self, src_xml: str, dst_xml: str, target_class: str, package_path: Optional[str] = None) -> bool:
         """
         过滤 JaCoCo XML 报告，仅包含目标类
-        这样可以针对特定类进行覆盖率分析
+        这样可以针对目标类进行覆盖率分析
         """
         try:
             src_path = Path(src_xml)

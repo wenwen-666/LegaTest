@@ -275,7 +275,7 @@ def extract_classes_from_json(data: Union[List, Dict]) -> List[Dict[str, Any]]:
 
 def extract_class_from_json(json_path: str, class_name: str) -> Optional[Dict[str, Any]]:
     """
-    从JSON文件中提取特定类的信息
+    从JSON文件中提取目标类的信息
     
     Args:
         json_path: JSON文件路径
@@ -1577,4 +1577,4 @@ if __name__ == "__main__":
     if isinstance(cls_info, dict) and "error" in cls_info:
         print(f"Error: {cls_info['error']}")
     else:
-        print(cls_info) 
+        print(cls_info)

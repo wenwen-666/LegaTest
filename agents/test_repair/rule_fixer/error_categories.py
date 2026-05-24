@@ -1,4 +1,4 @@
-"""
+﻿"""
 Java错误类别定义
 
 只包含能够精确匹配和修复的错误类别
@@ -48,7 +48,7 @@ ERROR_CATEGORIES = {
   # API兼容性错误 - 处理方式：替换不兼容的API调用
   # 主要针对Java版本兼容性和库版本兼容性问题
   "API_COMPATIBILITY_ERRORS": [
-    r"cannot find symbol:\s*variable\s+(\w+).*StandardCharsets",
+    r"cannot find symbol:\s*variable\s+(\w+)",
     r"cannot find symbol:\s*method\s+([^(]+).*CSVFormat",
     r"cannot find symbol:\s*method\s+repeat\(",
     r"cannot find symbol:\s*method\s+([^(]+).*builder\(\)",
@@ -91,4 +91,4 @@ ERROR_CATEGORIES = {
     r"resource.*not applicable",
     r"auto-closeable resource.*not applicable"
   ]
-} 
+}

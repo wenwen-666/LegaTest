@@ -493,7 +493,7 @@ class GenerationManager:
         replacement_count = 0
         
         # 使用单词边界 \b 确保只替换完整的类名
-        # 这样 "ZipFileTestV2" 会被替换，但 "MyZipFileTestV2Custom" 不会被替换
+        # 这样只会替换完整类名，不会误替换包含该字符串的其他名称
         word_boundary_pattern = rf'\b{re.escape(original_class_name)}\b'
         
         # 计算替换次数

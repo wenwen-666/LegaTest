@@ -1,4 +1,4 @@
-# dataset_parser.py
+﻿# dataset_parser.py
 import os
 import json
 import javalang
@@ -2930,7 +2930,7 @@ def safe_node_field(node, field_name, alternative_name=None, default=None):
                     child = node.children[i]
                     if child.type == "local_variable_declaration":
                         return child
-                # 如果没有找到特定类型，返回第一个子节点
+                # 如果没有找到目标类型，返回第一个子节点
                 return node.children[0]
         
         return default
@@ -2939,9 +2939,9 @@ def safe_node_field(node, field_name, alternative_name=None, default=None):
             print(f"[DEBUG] 安全访问节点字段失败: {field_name}/{alternative_name}, {str(e)}")
         return default
 
-# 安全获取所有特定类型的子节点
+# 安全获取所有目标类型的子节点
 def find_all_child_nodes_of_type(node, node_type):
-    """安全地查找所有特定类型的子节点"""
+    """安全地查找所有目标类型的子节点"""
     result = []
     if node is None:
         return result

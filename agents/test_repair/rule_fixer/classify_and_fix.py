@@ -1,4 +1,4 @@
-"""
+﻿"""
 错误分类和修复功能
 
 负责识别Java错误类型并应用相应的修复规则
@@ -90,7 +90,7 @@ def match_error_category(error_message: str) -> Optional[str]:
                 # 2. 使用匹配字符串的长度作为加权
                 score += len(pattern) / 100
                 
-                # 3. 特定类别的额外加分
+                # 3. 匹配类别的额外加分
                 if category == "IMPORT_ERRORS" and any(kw in error_message 
                                                      for kw in ["import", "unused"]):
                     score += 5
@@ -457,23 +457,6 @@ def fix_api_compatibility_errors(code: str, error_message=None) -> str:
     fixed_code = code
     error_str = str(error_message)
     
-    # Java 8 字符集兼容性修复
-    if "StandardCharsets" in error_str:
-        # ISO_8859_2 -> Charset.forName("ISO-8859-2")
-        charset_patterns = {
-            r"StandardCharsets\.ISO_8859_1": 'Charset.forName("ISO-8859-1")',
-            r"StandardCharsets\.ISO_8859_2": 'Charset.forName("ISO-8859-2")',
-            r"StandardCharsets\.ISO_8859_15": 'Charset.forName("ISO-8859-15")',
-            r"StandardCharsets\.([A-Z_0-9]+)": r'Charset.forName("\1")',
-        }
-        
-        for pattern, replacement in charset_patterns.items():
-            fixed_code = re.sub(pattern, replacement, fixed_code)
-        
-        # 添加必要的导入
-        if "import java.nio.charset.Charset;" not in fixed_code:
-            fixed_code = add_import(fixed_code, "import java.nio.charset.Charset;")
-    
     # Java 8 方法兼容性修复
     if "String.repeat" in error_str or "repeat(" in error_str:
         fixed_code = re.sub(r'(\w+)\.repeat\((\d+)\)', r'repeatString(\1, \2)', fixed_code)
@@ -492,8 +475,6 @@ def fix_api_compatibility_errors(code: str, error_message=None) -> str:
     # Path.of() -> Paths.get() (Java 8兼容)
     if "Path.of" in error_str or "cannot find symbol.*Path" in error_str:
         fixed_code = re.sub(r'Path\.of\(', 'Paths.get(', fixed_code)
-        if "import java.nio.file.Paths;" not in fixed_code:
-            fixed_code = add_import(fixed_code, "import java.nio.file.Paths;")
     
     # CSV库方法兼容性修复
     if "CSVFormat" in error_str and "withAllowDuplicateHeaderNames" in error_str:
@@ -680,15 +661,7 @@ def fix_constructor_errors(code: str, error_message=None) -> str:
             # 移除 new ClassName() 调用
             no_arg_pattern = rf'new\s+{re.escape(class_name)}\(\)'
             
-            # 常见的替换模式
-            replacements = {
-                'ZipFile': 'new ZipFile(file)',  # 需要文件参数
-                'ZipInputStream': 'new ZipInputStream(inputStream)',
-                'ZipOutputStream': 'new ZipOutputStream(outputStream)',
-            }
-            
-            replacement = replacements.get(class_name, f'// Removed invalid {class_name} constructor')
-            fixed_code = re.sub(no_arg_pattern, replacement, fixed_code)
+            fixed_code = re.sub(no_arg_pattern, f'// Removed invalid {class_name} constructor', fixed_code)
         
         # 策略2：添加必需的参数
         elif "cannot be applied to" in error_str:

@@ -400,31 +400,10 @@ class UnifiedTestManager:
             if license_file.exists():
                 with open(license_file, 'r', encoding='utf-8') as f:
                     return f.read()
-            else:
-                # 如果文件不存在，返回硬编码的许可证头部
-                return self._get_default_license_header()
+            return ""
         except Exception as e:
             print(f"警告: 读取许可证头文件失败: {e}")
-            return self._get_default_license_header()
-    
-    def _get_default_license_header(self) -> str:
-        """返回默认的Apache许可证头部"""
-        return """/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */"""
+            return ""
     
     def ensure_license_header(self, java_code: str) -> str:
         """

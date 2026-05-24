@@ -670,7 +670,7 @@ def _analyze_error_types(error_messages):
         
     # Character encoding issues 
     if "charset" in error_lower or "encoding" in error_lower:
-        guidance.append("• Check character encoding: Use correct StandardCharsets constants")
+        guidance.append("• Check character encoding: Use valid charset constants or factory methods")
     
     return guidance
 
@@ -1057,8 +1057,7 @@ Fix Strategy:"""
         
         if "Missing import:" in error_formatted:
             repair_prompt += """
-- Add missing import statements based on error details
-- Common imports: java.util.zip.ZipEntry, java.nio.charset.StandardCharsets"""
+- Add missing import statements based on error details"""
         
         if "Cannot find symbol:" in error_formatted:
             repair_prompt += """

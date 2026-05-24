@@ -405,7 +405,7 @@ class RuleFixer:
 
                 # 调试：输出原始Maven输出到文件（可选，避免文件不存在导致异常）
                 try:
-                    # 使用项目目录下的调试文件，避免硬编码路径
+                    # 使用项目目录下的调试文件
                     debug_dir = os.path.join(project_path, "target")
                     if not os.path.exists(debug_dir):
                         os.makedirs(debug_dir, exist_ok=True)
@@ -1284,4 +1284,3 @@ def generate_enhanced_prompt(original_error_prompt: str) -> str:
     # Return original prompt without adding duplicate Chinese/English guidance
     # The LLM repair module (_create_concise_repair_prompt) already handles appropriate guidance
     return original_error_prompt
- 

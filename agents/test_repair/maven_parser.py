@@ -196,7 +196,7 @@ class ErrorInfo:
                 r'package (.+) does not exist',
             ],
             'api_compatibility': [
-                r'cannot find symbol.*variable (\w+) in (StandardCharsets|Path|String)',
+                r'cannot find symbol.*variable (\w+) in (\w+)',
                 r'cannot find symbol.*method (\w+)',
                 r'(\w+)\.repeat\(',
                 r'(\w+)\.builder\(\)',
@@ -327,18 +327,8 @@ class ErrorInfo:
         
         # 针对不同错误类型提供具体指导
         if category == 'type_mismatch':
-            if 'zipfile cannot be converted to java.lang.autocloseable' in error_text:
-                return ("ZipFile不是AutoCloseable接口的实现，不能用于try-with-resources语句。\n"
-                       "修复方案：\n"
-                       "1. 使用传统try-finally模式：\n"
-                       "   ZipFile zipFile = null;\n"
-                       "   try {\n"
-                       "       zipFile = new ZipFile(file);\n"
-                       "       // 使用zipFile\n"
-                       "   } finally {\n"
-                       "       if (zipFile != null) zipFile.close();\n"
-                       "   }\n"
-                       "2. 或封装为AutoCloseable包装器")
+            if 'cannot be converted to java.lang.autocloseable' in error_text:
+                return "该类型未实现AutoCloseable，不能用于try-with-resources；请改用手动close()或选择AutoCloseable替代类型。"
             elif 'autocloseable' in error_text:
                 return "该类型不实现AutoCloseable接口，无法用于try-with-resources。建议使用传统的try-finally模式手动管理资源。"
             else:
@@ -381,14 +371,7 @@ class ErrorInfo:
         
         elif category == 'missing_class_or_package':
             missing_item = details[0] if details else '未知类或包'
-            if 'zipentry' in missing_item.lower():
-                return f"找不到类：{missing_item}。添加导入：import java.util.zip.ZipEntry;"
-            elif 'standardcharsets' in missing_item.lower():
-                return f"找不到类：{missing_item}。添加导入：import java.nio.charset.StandardCharsets;"
-            elif 'path' in missing_item.lower():
-                return f"找不到类：{missing_item}。添加导入：import java.nio.file.Path; 或 import java.nio.file.Paths;"
-            else:
-                return f"找不到类或包：{missing_item}。检查import语句和依赖项配置。"
+            return f"找不到类或包：{missing_item}。检查import语句和依赖项配置。"
         
         elif category == 'missing_method':
             method_name = details[0] if details else '未知方法'
@@ -751,17 +734,10 @@ class MavenOutput:
         # Extract specific error details based on category
         if category == 'missing_class_or_package' and details:
             missing_item = details[0]
-            if 'zipentry' in missing_item.lower():
-                return f"Missing import: 'java.util.zip.ZipEntry'{location}"
-            elif 'standardcharsets' in missing_item.lower():
-                return f"Missing import: 'java.nio.charset.StandardCharsets'{location}"
-            elif 'path' in missing_item.lower():
-                return f"Missing import: 'java.nio.file.Path'{location}"
-            else:
-                return f"Cannot find symbol: '{missing_item}'{location}"
+            return f"Cannot find symbol: '{missing_item}'{location}"
         
-        elif category == 'type_mismatch' and 'zipfile' in clean_error.lower() and 'autocloseable' in clean_error.lower():
-            return f"ZipFile does not implement AutoCloseable - cannot use try-with-resources{location}"
+        elif category == 'type_mismatch' and 'autocloseable' in clean_error.lower():
+            return f"Type does not implement AutoCloseable - cannot use try-with-resources{location}"
         
         elif category == 'syntax_error':
             if 'resource specification not allowed' in clean_error.lower():
@@ -884,8 +860,8 @@ class MavenOutput:
         """生成错误摘要"""
         clean_error = self._clean_error_text(error.error_line)
         # 限制长度，突出关键信息
-        if 'zipfile cannot be converted to java.lang.autocloseable' in clean_error.lower():
-            return "ZipFile不支持try-with-resources语法"
+        if 'cannot be converted to java.lang.autocloseable' in clean_error.lower():
+            return "类型不支持try-with-resources语法"
         elif 'cannot find symbol' in clean_error.lower() and 'class' in clean_error.lower():
             match = re.search(r'class (\w+)', clean_error, re.IGNORECASE)
             if match:
@@ -905,12 +881,7 @@ class MavenOutput:
             return "使用try-finally替代try-with-resources"
         elif category == 'missing_class_or_package':
             details = error.get_details()
-            if details and 'zipentry' in details[0].lower():
-                return "添加import java.util.zip.ZipEntry"
-            elif details and 'standardcharsets' in details[0].lower():
-                return "添加import java.nio.charset.StandardCharsets"
-            else:
-                return "检查import语句"
+            return "检查import语句"
         elif category == 'syntax_error':
             if "'(' or '[' expected" in error_text:
                 return "检查括号匹配"
@@ -982,15 +953,7 @@ class MavenOutput:
                 symbol = symbol_match.group(1)
                 location = location_match.group(1) if location_match else "unknown"
                 
-                # Provide specific import suggestions
-                if symbol in ['ZipEntry', 'ZipInputStream', 'ZipOutputStream']:
-                    return f"Missing import for '{symbol}' - Add: import java.util.zip.{symbol};"
-                elif symbol in ['StandardCharsets', 'Charset']:
-                    return f"Missing import for '{symbol}' - Add: import java.nio.charset.{symbol};"
-                elif symbol in ['Paths', 'Path', 'Files']:
-                    return f"Missing import for '{symbol}' - Add: import java.nio.file.{symbol};"
-                else:
-                    return f"Missing symbol '{symbol}' in {location} - likely missing import"
+                return f"Missing symbol '{symbol}' in {location} - likely missing import"
         
         # For package errors
         if 'package' in error and 'does not exist' in error:
@@ -1001,10 +964,7 @@ class MavenOutput:
         
         # For try-with-resources errors
         if 'try-with-resources' in error_lower or 'autoCloseable' in error_lower:
-            if 'zipfile' in error_lower:
-                return "ZipFile不支持try-with-resources - 改用手动close(): try { ZipFile zf = new ZipFile(...); ... } finally { if(zf != null) zf.close(); }"
-            else:
-                return "Try-with-resources requires AutoCloseable - use manual close() or find AutoCloseable alternative"
+            return "Try-with-resources requires AutoCloseable - use manual close() or find AutoCloseable alternative"
         
         # For syntax errors with specific patterns
         if "'try' without 'catch'" in error:
@@ -1239,4 +1199,4 @@ def run_and_parse_test(project_path: str, test_file: str) -> Tuple[str, bool]:
     # 运行测试并获取输出
     output, success = run_maven_test(project_path, full_test_class)
     
-    return output, success 
+    return output, success
